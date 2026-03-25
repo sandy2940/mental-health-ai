@@ -5,9 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MindEase — AI Mental Health Companion</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
-<!-- EmailJS for crisis alerts -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<!-- CryptoJS for AES-256 encryption -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
 <style>
 :root{
@@ -20,7 +18,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',sans-serif;background:var(--warm-white);color:var(--charcoal);
-  height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+  height:100dvh;display:flex;flex-direction:column;overflow:hidden;-webkit-overflow-scrolling:touch}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   background-image:radial-gradient(ellipse 80% 60% at 20% 10%,rgba(122,158,126,.08) 0%,transparent 60%),
   radial-gradient(ellipse 60% 80% at 80% 90%,rgba(193,127,90,.06) 0%,transparent 60%)}
@@ -160,7 +158,6 @@ header{position:relative;z-index:10;display:flex;align-items:center;justify-cont
   font-family:'DM Sans',sans-serif;color:var(--charcoal)}
 .mb:hover,.mb.active{background:var(--sage-light);border-color:var(--sage)}
 
-/* context notice */
 .ctx-notice{background:#e8eaf6;border:1px solid #c5cae9;border-radius:10px;
   padding:9px 14px;font-size:12px;color:#283593;line-height:1.5;animation:fadeUp .3s ease}
 
@@ -246,8 +243,6 @@ header{position:relative;z-index:10;display:flex;align-items:center;justify-cont
 .crisis-flash{animation:crisisFlash .4s ease 3}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-@media(max-width:600px){.bub{max-width:86%}.logo-text{font-size:17px}
-  .history-panel,.monitor-panel{width:100%}}
 
 /* ── LOCK SCREEN ── */
 .lock-screen{position:fixed;inset:0;z-index:999;
@@ -278,9 +273,69 @@ header{position:relative;z-index:10;display:flex;align-items:center;justify-cont
 .lock-note{font-size:11px;color:var(--muted);margin-top:16px;line-height:1.6;
   background:var(--warm-white);border-radius:8px;padding:10px}
 .lock-note strong{display:block;margin-bottom:3px;color:var(--charcoal)}
-/* Encrypted badge */
 .enc-badge{display:inline-flex;align-items:center;gap:4px;background:#e8f5e9;color:#2e7d32;
   border-radius:20px;padding:3px 10px;font-size:11px;font-weight:500;margin-bottom:14px}
+
+/* ══════════════════════════════════════
+   MOBILE RESPONSIVE — FIXED 📱
+══════════════════════════════════════ */
+@media(max-width:600px){
+  /* Bubbles */
+  .bub{max-width:86%}
+  .logo-text{font-size:16px}
+  .history-panel,.monitor-panel{width:100%}
+
+  /* Header */
+  header{padding:9px 12px;flex-wrap:nowrap;gap:5px}
+  .hright{gap:4px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .hright::-webkit-scrollbar{display:none}
+  .hbtn{padding:3px 7px;font-size:11px;white-space:nowrap;flex-shrink:0}
+  .status-pill{font-size:10px;padding:3px 7px;flex-shrink:0}
+
+  /* Hide less important buttons on mobile */
+  .hbtn#tts-btn .btn-label,
+  .hbtn:nth-child(3) .btn-label{ display:none }
+
+  /* Lang bar */
+  .lang-bar{padding:5px 12px}
+  .lang-inner{gap:5px}
+  .lbtn{padding:3px 9px;font-size:11px}
+  .lang-inner span:last-child{display:none}
+
+  /* NLP bar */
+  .nlp-bar.visible{max-height:60px}
+  .nlp-inner{padding:5px 12px;gap:4px}
+  .pill{font-size:10px;padding:2px 7px}
+
+  /* Welcome card */
+  .welcome{padding:16px 14px;border-radius:14px}
+  .welcome h2{font-size:18px}
+  .welcome p{font-size:13px}
+  .chips{gap:5px}
+  .chip{font-size:11px;padding:5px 10px}
+
+  /* Chat messages */
+  .msgs{padding:0 12px;gap:12px}
+
+  /* Mood strip */
+  .mood-strip{gap:5px}
+  .mb{font-size:12px;padding:3px 9px}
+
+  /* Input area */
+  .input-area{padding:8px 12px 12px}
+  .iw{padding:6px 6px 6px 12px;border-radius:16px}
+  #inp{font-size:13px}
+  .hint{font-size:10px}
+
+  /* Crisis bar */
+  .crisis-bar{font-size:12px;padding:7px 10px}
+
+  /* Panels full screen on mobile */
+  .history-panel,.monitor-panel{
+    width:100%;
+    height:100dvh;
+  }
+}
 </style>
 </head>
 <body>
@@ -308,7 +363,6 @@ header{position:relative;z-index:10;display:flex;align-items:center;justify-cont
     <div class="logo-text">Mind<span>Ease</span></div>
   </div>
   <div class="hright">
-    <!-- Monitor button (shows alert count) -->
     <button class="hbtn alert-btn" id="monitor-btn" onclick="openMonitor()">
       ⚠ Monitor <span class="alert-badge" id="alert-badge">0</span>
     </button>
@@ -413,35 +467,26 @@ header{position:relative;z-index:10;display:flex;align-items:center;justify-cont
       </svg>
     </button>
   </div>
-  <div class="hint">Mic · Enter to send · Shift+Enter new line · Powered by llama3 (Ollama)</div>
+  <div class="hint">Mic · Enter to send · Shift+Enter new line · Powered by Groq AI ⚡</div>
 </div>
 
 <script>
 // ═══════════════════════════════════════════════════
-//  CONFIG — Edit these values
+//  CONFIG — paste your Groq API key here
 // ═══════════════════════════════════════════════════
-const OLLAMA_URL  = 'http://localhost:11434/api/chat';
-const MODEL       = 'llama3';
-const MAX_HISTORY = 10;
+const GROQ_API_KEY = 'gsk_paste_your_key_here'; // ← உங்க key inga paste pannu da!
+const GROQ_URL     = 'https://api.groq.com/openai/v1/chat/completions';
+const MODEL        = 'llama3-8b-8192';
+const MAX_HISTORY  = 10;
 
-// ── ElevenLabs JARVIS-style Voice — free, no card needed ──
-// Step 1: Sign up free at elevenlabs.io
-// Step 2: Voice Library → search "JARVIS" or "Daniel" → Add to My Voices
-// Step 3: My Voices → copy the Voice ID
-// Step 4: Profile → API Keys → copy your API key
-// Paste both below:
-const ELEVENLABS_KEY      = '';   // e.g. 'sk_abc123...'
+// ── ElevenLabs Voice (optional) ──
+const ELEVENLABS_KEY      = '';
 const ELEVENLABS_VOICE_ID = 'vBbMDjRXh3bw953ZUHAn';
-
-// Voice settings — tuned for a calm, warm JARVIS feel
 const ELEVENLABS_SETTINGS = {
-  stability:        0.60,   // 0.0–1.0 · higher = more consistent, less expressive
-  similarity_boost: 0.80,   // 0.0–1.0 · higher = closer to original voice character
-  style:            0.30,   // 0.0–1.0 · slight style exaggeration for warmth
-  use_speaker_boost: true
+  stability:0.60, similarity_boost:0.80, style:0.30, use_speaker_boost:true
 };
 
-// EmailJS config
+// EmailJS config (optional)
 const EMAILJS_SERVICE_ID  = '';
 const EMAILJS_TEMPLATE_ID = '';
 const EMAILJS_PUBLIC_KEY  = '';
@@ -454,10 +499,10 @@ const LANGS = {
   'en-IN':{ name:'English', tts:'en-IN',
     sys:'The user is speaking English. Reply ONLY in English.',
     ph:'Type or tap mic to speak…' },
-  'ta-IN':{ name:'Tamil',   tts:'ta-IN',
+  'ta-IN':{ name:'Tamil', tts:'ta-IN',
     sys:'பயனர் தமிழில் பேசுகிறார். நீங்கள் முழுவதும் தமிழிலேயே பதில் அளிக்க வேண்டும்.',
     ph:'தமிழில் தட்டச்சு செய்யுங்கள்…' },
-  'hi-IN':{ name:'Hindi',   tts:'hi-IN',
+  'hi-IN':{ name:'Hindi', tts:'hi-IN',
     sys:'उपयोगकर्ता हिंदी में बोल रहे हैं। पूरी तरह हिंदी में जवाब दें।',
     ph:'हिंदी में टाइप करें…' },
 };
@@ -473,32 +518,30 @@ RESPONSE STYLE:
 - Never sound clinical or robotic. Sound like a caring human friend.
 
 THERAPY GUIDANCE (weave this naturally into your reply — do NOT list steps, just mention the technique warmly):
-- If person feels ANXIOUS: gently suggest box breathing or the 5-4-3-2-1 grounding technique in a natural sentence
+- If person feels ANXIOUS: gently suggest box breathing or the 5-4-3-2-1 grounding technique
 - If person feels SAD: mention one small action they can take, or the idea of writing down 3 good things
 - If person feels ANGRY: suggest pausing, taking a breath, and asking if it will matter in 5 days
 - If person feels JOY: help them savour it — reflect it back warmly
 - If NEUTRAL: offer a gentle check-in question or values reflection
-- Always suggest therapy techniques using words and examples natural to the user's culture and language
 
 RULES:
 - NEVER diagnose or prescribe medication
 - NEVER use numbered lists or bullet points in your reply
 - Always sound like you are speaking, not writing
-- If the user expresses suicidal thoughts or self-harm, respond with deep care and warmly mention: iCall India 9152987821 and Vandrevala Foundation 1860-2662-345 are available 24/7 if they need someone to talk to
+- If the user expresses suicidal thoughts or self-harm, respond with deep care and warmly mention: iCall India 9152987821 and Vandrevala Foundation 1860-2662-345 are available 24/7
 `;
 
 // ═══════════════════════════════════════════════════
 //  STATE
 // ═══════════════════════════════════════════════════
-let history    = [];          // current session messages
-let isBusy     = false;
-let ttsOn      = true;
-let curLang    = 'en-IN';
-let recog      = null;
-let listening  = false;
-let ttsVoices  = [];
+let history   = [];
+let isBusy    = false;
+let ttsOn     = true;
+let curLang   = 'en-IN';
+let recog     = null;
+let listening = false;
+let ttsVoices = [];
 
-// ── Session storage keys ──
 const SESSIONS_KEY = 'mindease_sessions';
 const ALERTS_KEY   = 'mindease_alerts';
 
@@ -531,14 +574,12 @@ function extractKW(t){
 function hasCrisis(t){return CRISIS_WORDS.some(k=>t.toLowerCase().includes(k));}
 
 function runNLP(text){
-  const emotion = detectEmotion(text);
-  const crisis  = hasCrisis(text);
-  const kws     = extractKW(text);
-  const langName = LANGS[curLang].name;
-
-  document.getElementById('crisis-bar').classList.toggle('show', crisis);
-
-  const inner = document.getElementById('nlp-inner');
+  const emotion=detectEmotion(text);
+  const crisis=hasCrisis(text);
+  const kws=extractKW(text);
+  const langName=LANGS[curLang].name;
+  document.getElementById('crisis-bar').classList.toggle('show',crisis);
+  const inner=document.getElementById('nlp-inner');
   inner.innerHTML='';
   const em={'joy':'😊','sadness':'😔','anxiety':'😰','anger':'😤','neutral':'😐'};
   mkPill(inner,`${em[emotion]||'😐'} ${emotion}`,`p-${emotion}`);
@@ -546,8 +587,7 @@ function runNLP(text){
   kws.forEach(k=>mkPill(inner,`# ${k}`,'p-kw'));
   if(crisis) mkPill(inner,'⚠ crisis','p-crisis');
   document.getElementById('nlp-bar').classList.add('visible');
-
-  if(crisis) triggerCrisisAlert(text, kws);
+  if(crisis) triggerCrisisAlert(text,kws);
   return emotion;
 }
 function mkPill(el,txt,cls){
@@ -558,37 +598,20 @@ function mkPill(el,txt,cls){
 // ═══════════════════════════════════════════════════
 //  CRISIS MONITORING
 // ═══════════════════════════════════════════════════
-function triggerCrisisAlert(msg, kws){
-  const alert = {
-    time: new Date().toLocaleString(),
-    ts:   Date.now(),
-    msg:  msg,
-    kws:  kws,
-    lang: LANGS[curLang].name
-  };
-
-  // Save to localStorage (encrypted)
-  const alerts = getAlerts();
+function triggerCrisisAlert(msg,kws){
+  const alert={time:new Date().toLocaleString(),ts:Date.now(),msg,kws,lang:LANGS[curLang].name};
+  const alerts=getAlerts();
   alerts.unshift(alert);
-  secureSet(ALERTS_KEY, alerts.slice(0,50));
-
-  // Update badge
+  secureSet(ALERTS_KEY,alerts.slice(0,50));
   updateAlertBadge();
-
-  // Flash the input area red
-  const ia = document.getElementById('input-area');
+  const ia=document.getElementById('input-area');
   ia.classList.add('crisis-flash');
-  setTimeout(()=>ia.classList.remove('crisis-flash'), 1500);
-
-  // Send email if EmailJS is configured
-  if(EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID && EMAILJS_PUBLIC_KEY && MONITOR_EMAIL){
+  setTimeout(()=>ia.classList.remove('crisis-flash'),1500);
+  if(EMAILJS_SERVICE_ID&&EMAILJS_TEMPLATE_ID&&EMAILJS_PUBLIC_KEY&&MONITOR_EMAIL){
     emailjs.init(EMAILJS_PUBLIC_KEY);
-    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-      to_email:   MONITOR_EMAIL,
-      alert_time: alert.time,
-      language:   alert.lang,
-      message:    msg,
-      keywords:   kws.join(', ') || 'crisis keyword detected',
+    emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{
+      to_email:MONITOR_EMAIL,alert_time:alert.time,language:alert.lang,
+      message:msg,keywords:kws.join(', ')||'crisis keyword detected',
     }).catch(()=>{});
   }
 }
@@ -596,48 +619,33 @@ function triggerCrisisAlert(msg, kws){
 // ═══════════════════════════════════════════════════
 //  THERAPY DATASET
 // ═══════════════════════════════════════════════════
-let therapyData = null;
-
+let therapyData=null;
 async function loadTherapyDataset(){
   try{
-    const res = await fetch('therapy_dataset.json');
+    const res=await fetch('therapy_dataset.json');
     if(!res.ok) throw new Error('not found');
-    therapyData = await res.json();
-  }catch(e){
-    // dataset not loaded — therapy cards simply won't show
-    therapyData = null;
-  }
+    therapyData=await res.json();
+  }catch(e){ therapyData=null; }
 }
-
 function getTherapyForEmotion(emotion){
   if(!therapyData) return null;
-  // Pick the language bucket matching current language, fallback to en-IN
-  const langBucket = therapyData[curLang] || therapyData['en-IN'];
-  const bucket = langBucket[emotion];
-  if(!bucket || !bucket.techniques.length) return null;
-  const idx = Math.floor(Math.random() * bucket.techniques.length);
-  return { meta: bucket, technique: bucket.techniques[idx] };
+  const langBucket=therapyData[curLang]||therapyData['en-IN'];
+  const bucket=langBucket[emotion];
+  if(!bucket||!bucket.techniques.length) return null;
+  const idx=Math.floor(Math.random()*bucket.techniques.length);
+  return {meta:bucket,technique:bucket.techniques[idx]};
 }
-
 function renderTherapyCard(emotion){
-  const result = getTherapyForEmotion(emotion);
+  const result=getTherapyForEmotion(emotion);
   if(!result) return null;
-
-  const { meta, technique } = result;
-
-  const card = document.createElement('div');
-  card.className = 'therapy-card';
-  card.style.cssText = `background:${meta.color};border-color:${meta.border};color:${meta.text}`;
-
-  const stepsHtml = technique.steps.map((s,i)=>
-    `<li><span class="step-num">${i+1}.</span><span>${s}</span></li>`
-  ).join('');
-
-  card.innerHTML = `
+  const {meta,technique}=result;
+  const card=document.createElement('div');
+  card.className='therapy-card';
+  card.style.cssText=`background:${meta.color};border-color:${meta.border};color:${meta.text}`;
+  const stepsHtml=technique.steps.map((s,i)=>`<li><span class="step-num">${i+1}.</span><span>${s}</span></li>`).join('');
+  card.innerHTML=`
     <div class="therapy-header">
-      <div class="therapy-title">
-        ${meta.emoji} CBT Therapy Recommendation
-      </div>
+      <div class="therapy-title">${meta.emoji} CBT Therapy Recommendation</div>
       <button class="therapy-toggle" onclick="toggleSteps(this)">▼ Show steps</button>
     </div>
     <div class="therapy-meta">
@@ -650,152 +658,117 @@ function renderTherapyCard(emotion){
       <ul class="therapy-steps">${stepsHtml}</ul>
       <div class="therapy-affirmation">💬 "${technique.affirmation}"</div>
     </div>`;
-
   return card;
 }
-
 function toggleSteps(btn){
-  const card = btn.closest('.therapy-card');
-  const wrap = card.querySelector('.therapy-steps-wrap');
-  const open = wrap.classList.toggle('open');
-  btn.textContent = open ? '▲ Hide steps' : '▼ Show steps';
+  const wrap=btn.closest('.therapy-card').querySelector('.therapy-steps-wrap');
+  const open=wrap.classList.toggle('open');
+  btn.textContent=open?'▲ Hide steps':'▼ Show steps';
 }
 
-const PASSPHRASE_HASH_KEY = 'mindease_ph';  // stores hash of passphrase (not passphrase itself)
-let SESSION_KEY = null;   // in-memory only — cleared on lock
+// ═══════════════════════════════════════════════════
+//  ENCRYPTION
+// ═══════════════════════════════════════════════════
+const PASSPHRASE_HASH_KEY='mindease_ph';
+let SESSION_KEY=null;
 
-function encryptData(data, key){
-  try{ return CryptoJS.AES.encrypt(JSON.stringify(data), key).toString(); }
-  catch(e){ return null; }
+function encryptData(data,key){
+  try{return CryptoJS.AES.encrypt(JSON.stringify(data),key).toString();}catch(e){return null;}
 }
-function decryptData(cipher, key){
-  try{
-    const bytes = CryptoJS.AES.decrypt(cipher, key);
-    return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-  }catch(e){ return null; }
+function decryptData(cipher,key){
+  try{const bytes=CryptoJS.AES.decrypt(cipher,key);return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));}catch(e){return null;}
 }
-function hashPassphrase(pass){
-  return CryptoJS.SHA256(pass).toString();
-}
-
-// Encrypted localStorage wrappers
+function hashPassphrase(pass){return CryptoJS.SHA256(pass).toString();}
 function secureGet(storageKey){
   if(!SESSION_KEY) return [];
-  const raw = localStorage.getItem(storageKey);
+  const raw=localStorage.getItem(storageKey);
   if(!raw) return [];
-  const dec = decryptData(raw, SESSION_KEY);
-  return Array.isArray(dec) ? dec : [];
+  const dec=decryptData(raw,SESSION_KEY);
+  return Array.isArray(dec)?dec:[];
 }
-function secureSet(storageKey, data){
+function secureSet(storageKey,data){
   if(!SESSION_KEY) return;
-  const enc = encryptData(data, SESSION_KEY);
-  if(enc) localStorage.setItem(storageKey, enc);
+  const enc=encryptData(data,SESSION_KEY);
+  if(enc) localStorage.setItem(storageKey,enc);
 }
 
 // ═══════════════════════════════════════════════════
 //  LOCK SCREEN
 // ═══════════════════════════════════════════════════
-function isFirstTime(){
-  return !localStorage.getItem(PASSPHRASE_HASH_KEY);
-}
+function isFirstTime(){return !localStorage.getItem(PASSPHRASE_HASH_KEY);}
 
 function submitPassphrase(){
-  const pass = document.getElementById('lock-pass').value.trim();
-  const errEl = document.getElementById('lock-err');
-  const input = document.getElementById('lock-pass');
-
-  if(pass.length < 4){
-    errEl.textContent = 'Passphrase must be at least 4 characters.';
+  const pass=document.getElementById('lock-pass').value.trim();
+  const errEl=document.getElementById('lock-err');
+  const input=document.getElementById('lock-pass');
+  if(pass.length<4){
+    errEl.textContent='Passphrase must be at least 4 characters.';
     input.classList.add('error');
     setTimeout(()=>input.classList.remove('error'),400);
     return;
   }
-
-  const hash = hashPassphrase(pass);
-
+  const hash=hashPassphrase(pass);
   if(isFirstTime()){
-    // First launch — set passphrase
-    localStorage.setItem(PASSPHRASE_HASH_KEY, hash);
-    SESSION_KEY = pass;
-    unlockApp();
-  } else {
-    // Returning — verify passphrase
-    const storedHash = localStorage.getItem(PASSPHRASE_HASH_KEY);
-    if(hash === storedHash){
-      SESSION_KEY = pass;
-      unlockApp();
-    } else {
-      errEl.textContent = 'Wrong passphrase. Try again.';
-      input.value = '';
-      input.classList.add('error');
-      setTimeout(()=>{ input.classList.remove('error'); errEl.textContent=''; },1200);
+    localStorage.setItem(PASSPHRASE_HASH_KEY,hash);
+    SESSION_KEY=pass; unlockApp();
+  }else{
+    const storedHash=localStorage.getItem(PASSPHRASE_HASH_KEY);
+    if(hash===storedHash){SESSION_KEY=pass;unlockApp();}
+    else{
+      errEl.textContent='Wrong passphrase. Try again.';
+      input.value='';input.classList.add('error');
+      setTimeout(()=>{input.classList.remove('error');errEl.textContent='';},1200);
     }
   }
 }
-
 function unlockApp(){
   document.getElementById('lock-screen').classList.add('hidden');
   document.getElementById('lock-pass').value='';
   document.getElementById('lock-err').textContent='';
-  // Update lock sub text for next time
-  document.getElementById('lock-sub').textContent='Your conversations are encrypted and private.\nEnter your passphrase to continue.';
   updateAlertBadge();
 }
-
 function lockApp(){
-  SESSION_KEY = null;
+  SESSION_KEY=null;
   window.speechSynthesis.cancel();
-  // Update sub text to show it's a returning user
-  if(!isFirstTime()){
-    document.getElementById('lock-sub').textContent='Your conversations are encrypted and private.\nEnter your passphrase to continue.';
-    document.getElementById('lock-btn').textContent='Unlock';
-  }
   document.getElementById('lock-screen').classList.remove('hidden');
   setTimeout(()=>document.getElementById('lock-pass').focus(),300);
 }
-
-// Enter key on lock screen
 document.getElementById('lock-pass').addEventListener('keydown',function(e){
   if(e.key==='Enter') submitPassphrase();
 });
-
-// Update sub text and button based on first time or not
 function initLockScreen(){
   if(isFirstTime()){
-    document.getElementById('lock-sub').textContent='Welcome! Choose a passphrase to encrypt your conversations.\nYou\'ll need this every time you open MindEase.';
+    document.getElementById('lock-sub').textContent="Welcome! Choose a passphrase to encrypt your conversations.\nYou'll need this every time you open MindEase.";
     document.getElementById('lock-btn').textContent='Set Passphrase & Start';
   }
   setTimeout(()=>document.getElementById('lock-pass').focus(),300);
 }
 
-function getAlerts(){ return secureGet(ALERTS_KEY); }
-
+function getAlerts(){return secureGet(ALERTS_KEY);}
 function updateAlertBadge(){
-  const n = getAlerts().length;
-  document.getElementById('alert-badge').textContent = n > 99 ? '99+' : n;
+  const n=getAlerts().length;
+  document.getElementById('alert-badge').textContent=n>99?'99+':n;
 }
 
+// ═══════════════════════════════════════════════════
+//  MONITOR PANEL
+// ═══════════════════════════════════════════════════
 function renderMonitor(){
-  const alerts = getAlerts();
-  const body = document.getElementById('mp-body');
+  const alerts=getAlerts();
+  const body=document.getElementById('mp-body');
   body.innerHTML='';
-
-  // Stats
-  const stats = document.createElement('div');
+  const stats=document.createElement('div');
   stats.className='mp-stats';
   stats.innerHTML=`
     <div class="mp-stat danger"><div class="mp-stat-n">${alerts.length}</div><div class="mp-stat-l">Total alerts</div></div>
     <div class="mp-stat"><div class="mp-stat-n">${alerts.filter(a=>Date.now()-a.ts<86400000).length}</div><div class="mp-stat-l">Last 24 hours</div></div>`;
   body.appendChild(stats);
-
   if(!alerts.length){
     const empty=document.createElement('div');
     empty.className='mp-empty';
     empty.innerHTML='<div class="mp-empty-icon">✅</div>No crisis alerts yet.<br>The system is monitoring all messages.';
-    body.appendChild(empty);
-    return;
+    body.appendChild(empty);return;
   }
-
   alerts.forEach(a=>{
     const card=document.createElement('div');
     card.className='alert-card';
@@ -808,64 +781,47 @@ function renderMonitor(){
       </div>`;
     body.appendChild(card);
   });
-
   const clr=document.createElement('button');
-  clr.className='clear-alerts';
-  clr.textContent='Clear all alerts';
-  clr.onclick=()=>{ localStorage.removeItem(ALERTS_KEY); updateAlertBadge(); renderMonitor(); };
+  clr.className='clear-alerts';clr.textContent='Clear all alerts';
+  clr.onclick=()=>{localStorage.removeItem(ALERTS_KEY);updateAlertBadge();renderMonitor();};
   body.appendChild(clr);
 }
-
-function openMonitor(){ renderMonitor(); document.getElementById('monitor-panel').classList.add('open'); document.getElementById('overlay').classList.add('show'); }
-function closeMonitor(){ document.getElementById('monitor-panel').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }
+function openMonitor(){renderMonitor();document.getElementById('monitor-panel').classList.add('open');document.getElementById('overlay').classList.add('show');}
+function closeMonitor(){document.getElementById('monitor-panel').classList.remove('open');document.getElementById('overlay').classList.remove('show');}
 
 // ═══════════════════════════════════════════════════
-//  CHAT HISTORY (localStorage)
+//  CHAT HISTORY
 // ═══════════════════════════════════════════════════
-let currentSessionMoods = [];  // track moods this session
-
-function getSessions(){ return secureGet(SESSIONS_KEY); }
-
+let currentSessionMoods=[];
+function getSessions(){return secureGet(SESSIONS_KEY);}
 function saveSession(){
   if(!history.length) return;
-  const sessions = getSessions();
-  const userMsgs = history.filter(m=>m.role==='user').map(m=>m.content);
-  const allText  = userMsgs.join(' ');
-  const emotion  = detectEmotion(allText);
-  const kws      = extractKW(allText).slice(0,6);
-  const summary  = userMsgs.slice(0,2).map(m=>m.length>60?m.slice(0,60)+'…':m).join(' / ');
-  const session = {
-    id:      Date.now(),
-    date:    new Date().toLocaleString(),
-    lang:    LANGS[curLang].name,
-    emotion: emotion,
-    kws:     kws,
-    summary: summary || 'Session ended',
-    msgs:    history.slice()
-  };
+  const sessions=getSessions();
+  const userMsgs=history.filter(m=>m.role==='user').map(m=>m.content);
+  const allText=userMsgs.join(' ');
+  const emotion=detectEmotion(allText);
+  const kws=extractKW(allText).slice(0,6);
+  const summary=userMsgs.slice(0,2).map(m=>m.length>60?m.slice(0,60)+'…':m).join(' / ');
+  const session={id:Date.now(),date:new Date().toLocaleString(),lang:LANGS[curLang].name,emotion,kws,summary:summary||'Session ended',msgs:history.slice()};
   sessions.unshift(session);
-  secureSet(SESSIONS_KEY, sessions.slice(0,MAX_HISTORY));
+  secureSet(SESSIONS_KEY,sessions.slice(0,MAX_HISTORY));
 }
-
 function buildHistorySummary(){
-  const sessions = getSessions().slice(0,5);
+  const sessions=getSessions().slice(0,5);
   if(!sessions.length) return '';
-  const lines = sessions.map(s=>`[${s.date}] Mood: ${s.emotion}. Topics: ${s.kws.join(', ')||'general'}. Summary: ${s.summary}`);
-  return `\n\nPREVIOUS SESSION CONTEXT (last ${lines.length} sessions — use this to personalise your response):\n${lines.join('\n')}`;
+  const lines=sessions.map(s=>`[${s.date}] Mood: ${s.emotion}. Topics: ${s.kws.join(', ')||'general'}. Summary: ${s.summary}`);
+  return `\n\nPREVIOUS SESSION CONTEXT (last ${lines.length} sessions):\n${lines.join('\n')}`;
 }
-
 function renderHistory(){
-  const sessions = getSessions();
-  const body = document.getElementById('hp-body');
+  const sessions=getSessions();
+  const body=document.getElementById('hp-body');
   body.innerHTML='';
-
-  // Mood trend chart
   if(sessions.length){
-    const chart = document.createElement('div');
+    const chart=document.createElement('div');
     chart.className='mood-chart';
-    const recent = sessions.slice(0,7).reverse();
-    const moodColors = {joy:'#7ab87a',sadness:'#64b5f6',anxiety:'#ffb74d',anger:'#e57373',neutral:'#bdbdbd'};
-    const moodH = {joy:100,sadness:60,anxiety:75,anger:80,neutral:40};
+    const recent=sessions.slice(0,7).reverse();
+    const moodColors={joy:'#7ab87a',sadness:'#64b5f6',anxiety:'#ffb74d',anger:'#e57373',neutral:'#bdbdbd'};
+    const moodH={joy:100,sadness:60,anxiety:75,anger:80,neutral:40};
     chart.innerHTML=`<div class="mood-chart-title">Mood trend (last ${recent.length} sessions)</div>
       <div class="mood-bars">
         ${recent.map(s=>`<div class="mood-bar-col">
@@ -875,15 +831,12 @@ function renderHistory(){
       </div>`;
     body.appendChild(chart);
   }
-
   if(!sessions.length){
     const empty=document.createElement('div');
     empty.className='no-history';
     empty.textContent='No past sessions yet. Your history will appear here after your first chat.';
-    body.appendChild(empty);
-    return;
+    body.appendChild(empty);return;
   }
-
   sessions.forEach(s=>{
     const card=document.createElement('div');
     card.className='session-card';
@@ -897,16 +850,14 @@ function renderHistory(){
       </div>`;
     body.appendChild(card);
   });
-
   const clr=document.createElement('button');
   clr.className='clear-alerts';clr.textContent='Clear history';
-  clr.onclick=()=>{ localStorage.removeItem(SESSIONS_KEY); renderHistory(); };
+  clr.onclick=()=>{localStorage.removeItem(SESSIONS_KEY);renderHistory();};
   body.appendChild(clr);
 }
-
-function openHistory(){ renderHistory(); document.getElementById('history-panel').classList.add('open'); document.getElementById('overlay').classList.add('show'); }
-function closeHistory(){ document.getElementById('history-panel').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }
-function closePanels(){ closeHistory(); closeMonitor(); }
+function openHistory(){renderHistory();document.getElementById('history-panel').classList.add('open');document.getElementById('overlay').classList.add('show');}
+function closeHistory(){document.getElementById('history-panel').classList.remove('open');document.getElementById('overlay').classList.remove('show');}
+function closePanels(){closeHistory();closeMonitor();}
 
 // ═══════════════════════════════════════════════════
 //  SPEECH
@@ -914,99 +865,71 @@ function closePanels(){ closeHistory(); closeMonitor(); }
 function buildRecog(lang){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR) return null;
-  const r=new SR(); r.continuous=false; r.interimResults=true; r.lang=lang;
-  r.onresult=e=>{ document.getElementById('inp').value=Array.from(e.results).map(r=>r[0].transcript).join(''); };
-  r.onend=()=>{ listening=false; document.getElementById('mic-btn').classList.remove('listening');
-    const v=document.getElementById('inp').value.trim(); if(v) sendMessage(); };
-  r.onerror=e=>{ listening=false; document.getElementById('mic-btn').classList.remove('listening');
-    if(e.error==='not-allowed') showErr('Mic permission denied. Allow mic access in Chrome.');
-    else if(e.error!=='aborted') showErr('Mic error: '+e.error); };
+  const r=new SR();r.continuous=false;r.interimResults=true;r.lang=lang;
+  r.onresult=e=>{document.getElementById('inp').value=Array.from(e.results).map(r=>r[0].transcript).join('');};
+  r.onend=()=>{listening=false;document.getElementById('mic-btn').classList.remove('listening');
+    const v=document.getElementById('inp').value.trim();if(v) sendMessage();};
+  r.onerror=e=>{listening=false;document.getElementById('mic-btn').classList.remove('listening');
+    if(e.error==='not-allowed') showErr('Mic permission denied. Allow mic access in browser.');
+    else if(e.error!=='aborted') showErr('Mic error: '+e.error);};
   return r;
 }
 function toggleMic(){
   if(!recog) recog=buildRecog(curLang);
-  if(!recog){ showErr('Speech recognition requires Chrome.'); return; }
-  if(listening){ recog.stop(); return; }
-  recog=buildRecog(curLang); hideErr(); recog.start(); listening=true;
+  if(!recog){showErr('Speech recognition requires Chrome.');return;}
+  if(listening){recog.stop();return;}
+  recog=buildRecog(curLang);hideErr();recog.start();listening=true;
   document.getElementById('mic-btn').classList.add('listening');
   document.getElementById('inp').placeholder='Listening in '+LANGS[curLang].name+'…';
-  setTimeout(()=>{ document.getElementById('inp').placeholder=LANGS[curLang].ph; },8000);
+  setTimeout(()=>{document.getElementById('inp').placeholder=LANGS[curLang].ph;},8000);
 }
-
-function loadVoices(){ ttsVoices=window.speechSynthesis.getVoices(); }
+function loadVoices(){ttsVoices=window.speechSynthesis.getVoices();}
 window.speechSynthesis.onvoiceschanged=loadVoices;
-
 function getBestVoice(lang){
   if(!ttsVoices.length) ttsVoices=window.speechSynthesis.getVoices();
   const tts=LANGS[lang]?.tts||'en-IN';
   return ttsVoices.find(v=>v.lang===tts)||ttsVoices.find(v=>v.lang.startsWith(tts.split('-')[0]))||ttsVoices.find(v=>v.lang.startsWith('en'))||null;
 }
-
-// ── ElevenLabs JARVIS-style voice ──
-async function speakElevenLabs(text, avEl){
-  const url = `https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICE_ID}/stream`;
+async function speakElevenLabs(text,avEl){
+  const url=`https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICE_ID}/stream`;
   if(avEl) avEl.classList.add('speaking');
   try{
-    const res = await fetch(url, {
-      method: 'POST',
-      headers:{
-        'xi-api-key': ELEVENLABS_KEY,
-        'Content-Type': 'application/json',
-        'Accept': 'audio/mpeg'
-      },
-      body: JSON.stringify({
-        text,
-        model_id: 'eleven_turbo_v2',   // fastest + most natural model
-        voice_settings: ELEVENLABS_SETTINGS
-      })
-    });
-    if(!res.ok) throw new Error('ElevenLabs HTTP ' + res.status);
-    const blob = await res.blob();
-    playAudioBlob(blob, avEl);
+    const res=await fetch(url,{method:'POST',headers:{'xi-api-key':ELEVENLABS_KEY,'Content-Type':'application/json','Accept':'audio/mpeg'},
+      body:JSON.stringify({text,model_id:'eleven_turbo_v2',voice_settings:ELEVENLABS_SETTINGS})});
+    if(!res.ok) throw new Error('ElevenLabs HTTP '+res.status);
+    const blob=await res.blob();
+    playAudioBlob(blob,avEl);
   }catch(e){
-    console.warn('ElevenLabs TTS failed, falling back to browser:', e.message);
+    console.warn('ElevenLabs TTS failed, falling back to browser:',e.message);
     if(avEl) avEl.classList.remove('speaking');
-    speakBrowser(text, avEl);
+    speakBrowser(text,avEl);
   }
 }
-
-function playAudioBlob(blob, avEl){
-  const url = URL.createObjectURL(blob);
-  const audio = new Audio(url);
-  audio.onended = ()=>{ URL.revokeObjectURL(url); if(avEl) avEl.classList.remove('speaking'); };
-  audio.onerror = ()=>{ URL.revokeObjectURL(url); if(avEl) avEl.classList.remove('speaking'); };
+function playAudioBlob(blob,avEl){
+  const url=URL.createObjectURL(blob);
+  const audio=new Audio(url);
+  audio.onended=()=>{URL.revokeObjectURL(url);if(avEl) avEl.classList.remove('speaking');};
+  audio.onerror=()=>{URL.revokeObjectURL(url);if(avEl) avEl.classList.remove('speaking');};
   audio.play();
 }
-
-// ── Browser TTS fallback ──
-function speakBrowser(text, avEl){
+function speakBrowser(text,avEl){
   if(!window.speechSynthesis) return;
   window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-  u.rate=0.90; u.pitch=1.05; u.volume=1.0;
-  const v=getBestVoice(curLang); if(v) u.voice=v;
-  if(avEl){
-    avEl.classList.add('speaking');
-    u.onend  = ()=> avEl.classList.remove('speaking');
-    u.onerror= ()=> avEl.classList.remove('speaking');
-  }
+  const u=new SpeechSynthesisUtterance(text);
+  u.rate=0.90;u.pitch=1.05;u.volume=1.0;
+  const v=getBestVoice(curLang);if(v) u.voice=v;
+  if(avEl){avEl.classList.add('speaking');u.onend=()=>avEl.classList.remove('speaking');u.onerror=()=>avEl.classList.remove('speaking');}
   window.speechSynthesis.speak(u);
 }
-
-// ── Main speak() — ElevenLabs if keys set, browser otherwise ──
-function speak(text, avEl){
+function speak(text,avEl){
   if(!ttsOn) return;
-  if(ELEVENLABS_KEY && ELEVENLABS_VOICE_ID && ELEVENLABS_KEY.length > 5){
-    speakElevenLabs(text, avEl);
-  } else {
-    speakBrowser(text, avEl);
-  }
+  if(ELEVENLABS_KEY&&ELEVENLABS_VOICE_ID&&ELEVENLABS_KEY.length>5) speakElevenLabs(text,avEl);
+  else speakBrowser(text,avEl);
 }
-
 function toggleTTS(){
   ttsOn=!ttsOn;
   const b=document.getElementById('tts-btn');
-  b.textContent=ttsOn?'🔊 Voice':'🔇 Muted'; b.classList.toggle('on',ttsOn);
+  b.textContent=ttsOn?'🔊 Voice':'🔇 Muted';b.classList.toggle('on',ttsOn);
   if(!ttsOn) window.speechSynthesis.cancel();
 }
 
@@ -1015,19 +938,19 @@ function toggleTTS(){
 // ═══════════════════════════════════════════════════
 function setLang(btn){
   document.querySelectorAll('.lbtn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active'); curLang=btn.dataset.lang;
+  btn.classList.add('active');curLang=btn.dataset.lang;
   document.getElementById('inp').placeholder=LANGS[curLang].ph;
   recog=buildRecog(curLang);
 }
 
 // ═══════════════════════════════════════════════════
-//  SEND MESSAGE
+//  SEND MESSAGE — GROQ API ✅
 // ═══════════════════════════════════════════════════
 function setMood(btn,mood){
   document.querySelectorAll('.mb').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active'); sendChip('My current mood is: '+mood);
+  btn.classList.add('active');sendChip('My current mood is: '+mood);
 }
-function sendChip(text){ document.getElementById('inp').value=text; sendMessage(); }
+function sendChip(text){document.getElementById('inp').value=text;sendMessage();}
 
 async function sendMessage(){
   const inp=document.getElementById('inp');
@@ -1036,21 +959,16 @@ async function sendMessage(){
 
   addMsg('user',text);
   history.push({role:'user',content:text});
-  inp.value=''; inp.style.height='auto';
+  inp.value='';inp.style.height='auto';
 
-  let lastEmotion = runNLP(text);
-  setBusy(true); hideErr();
+  let lastEmotion=runNLP(text);
+  setBusy(true);hideErr();
 
-  // Build system prompt — inject detected emotion so llama3 tailors its voice response
-  const historySummary = buildHistorySummary();
-  const emotionHint = `\n\nDETECTED EMOTION: The person appears to be feeling "${lastEmotion}". Tailor your warm, spoken response to this emotion and naturally weave in a relevant CBT technique as described above.`;
-  const sysMsg = BASE_SYS
-    + '\n\nLANGUAGE INSTRUCTION (CRITICAL): ' + LANGS[curLang].sys
-    + emotionHint
-    + historySummary;
+  const historySummary=buildHistorySummary();
+  const emotionHint=`\n\nDETECTED EMOTION: The person appears to be feeling "${lastEmotion}". Tailor your warm, spoken response to this emotion.`;
+  const sysMsg=BASE_SYS+'\n\nLANGUAGE INSTRUCTION (CRITICAL): '+LANGS[curLang].sys+emotionHint+historySummary;
 
-  // Show context notice on first message if history exists
-  if(history.length===1 && getSessions().length>0){
+  if(history.length===1&&getSessions().length>0){
     const notice=document.createElement('div');
     notice.className='ctx-notice';
     notice.textContent=`📋 I remember our ${getSessions().length} previous session(s) — using that context to support you better today.`;
@@ -1058,43 +976,62 @@ async function sendMessage(){
   }
 
   try{
-    const res=await fetch(OLLAMA_URL,{
+    // ✅ GROQ API CALL
+    const res=await fetch(GROQ_URL,{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({ model:MODEL,
+      headers:{
+        'Content-Type':'application/json',
+        'Authorization':`Bearer ${GROQ_API_KEY}`
+      },
+      body:JSON.stringify({
+        model:MODEL,
         messages:[{role:'system',content:sysMsg},...history],
-        stream:false })
+        max_tokens:500,
+        temperature:0.7
+      })
     });
-    if(!res.ok) throw new Error('HTTP '+res.status);
+
+    if(!res.ok){
+      const errData=await res.json().catch(()=>({}));
+      throw new Error(errData?.error?.message||'HTTP '+res.status);
+    }
+
     const data=await res.json();
-    const reply=data.message?.content?.trim()||"I'm here with you. Tell me more.";
+    const reply=data.choices?.[0]?.message?.content?.trim()||"I'm here with you. Tell me more.";
     setBusy(false);
     history.push({role:'assistant',content:reply});
     const av=addMsg('bot',reply);
     setStatus(true);
     speak(reply,av);
+
   }catch(err){
     setBusy(false);
-    if(err.message.includes('fetch')||err.message.includes('Network')) setStatus(false);
-    else showErr('Something went wrong — please try again.');
+    console.error('Groq error:',err);
+    if(err.message.includes('401')||err.message.includes('auth')){
+      showErr('❌ Invalid API key — paste your Groq key correctly in the config section.');
+    }else if(err.message.includes('fetch')||err.message.includes('Network')){
+      showErr('❌ Network error — check your internet connection.');
+      setStatus(false);
+    }else{
+      showErr('Something went wrong: '+err.message);
+    }
   }
 }
 
 function addMsg(role,text){
   const wrap=document.getElementById('msgs');
-  const div=document.createElement('div'); div.className='msg '+(role==='user'?'user':'bot');
-  const av=document.createElement('div'); av.className='av '+(role==='user'?'usr':'bot'); av.textContent=role==='user'?'You':'M';
-  const bw=document.createElement('div'); bw.className='bwrap';
-  const bub=document.createElement('div'); bub.className='bub'; bub.textContent=text;
+  const div=document.createElement('div');div.className='msg '+(role==='user'?'user':'bot');
+  const av=document.createElement('div');av.className='av '+(role==='user'?'usr':'bot');av.textContent=role==='user'?'You':'M';
+  const bw=document.createElement('div');bw.className='bwrap';
+  const bub=document.createElement('div');bub.className='bub';bub.textContent=text;
   bw.appendChild(bub);
   if(role==='bot'){
-    const rb=document.createElement('button'); rb.className='replay-btn'; rb.textContent='🔈 Replay';
-    rb.onclick=()=>speak(text,av); bw.appendChild(rb);
+    const rb=document.createElement('button');rb.className='replay-btn';rb.textContent='🔈 Replay';
+    rb.onclick=()=>speak(text,av);bw.appendChild(rb);
   }
-  div.appendChild(av); div.appendChild(bw); wrap.appendChild(div); scrollDown();
+  div.appendChild(av);div.appendChild(bw);wrap.appendChild(div);scrollDown();
   return av;
 }
-
 function setBusy(v){
   isBusy=v;
   document.getElementById('typing').classList.toggle('show',v);
@@ -1103,46 +1040,39 @@ function setBusy(v){
   document.getElementById('mic-btn').disabled=v;
   if(v) scrollDown();
 }
-function scrollDown(){ const c=document.getElementById('chat-wrap'); setTimeout(()=>c.scrollTo({top:c.scrollHeight,behavior:'smooth'}),50); }
-function showErr(m){ const e=document.getElementById('err'); e.textContent=m; e.classList.add('show'); }
-function hideErr(){ document.getElementById('err').classList.remove('show'); }
-
+function scrollDown(){const c=document.getElementById('chat-wrap');setTimeout(()=>c.scrollTo({top:c.scrollHeight,behavior:'smooth'}),50);}
+function showErr(m){const e=document.getElementById('err');e.textContent=m;e.classList.add('show');}
+function hideErr(){document.getElementById('err').classList.remove('show');}
 function clearChat(){
-  saveSession();   // save before clearing
-  history=[];
+  saveSession();history=[];
   document.querySelectorAll('#msgs .msg, #msgs .ctx-notice').forEach(m=>m.remove());
   document.getElementById('crisis-bar').classList.remove('show');
   document.getElementById('nlp-bar').classList.remove('visible');
   document.querySelectorAll('.mb').forEach(b=>b.classList.remove('active'));
-  hideErr(); window.speechSynthesis.cancel();
+  hideErr();window.speechSynthesis.cancel();
 }
 
 // ═══════════════════════════════════════════════════
-//  CONNECTION
+//  CONNECTION — GROQ is always online ✅
 // ═══════════════════════════════════════════════════
-async function checkConn(){
-  try{ const r=await fetch('http://localhost:11434/',{signal:AbortSignal.timeout(3000)}); setStatus(r.ok); }
-  catch{ setStatus(false); }
+function checkConn(){
+  setStatus(true);
 }
 function setStatus(ok){
   document.getElementById('sdot').className='sdot'+(ok?'':' off');
-  document.getElementById('stxt').textContent=ok?'llama3 ready':'Ollama offline';
-  if(!ok) showErr('Ollama is not running. Open a terminal and run:  ollama serve');
-  else hideErr();
+  document.getElementById('stxt').textContent=ok?'Groq AI ready ⚡':'Connection error';
 }
 
 // ═══════════════════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════════════════
 document.getElementById('inp').addEventListener('input',function(){
-  this.style.height='auto'; this.style.height=Math.min(this.scrollHeight,110)+'px';
+  this.style.height='auto';this.style.height=Math.min(this.scrollHeight,110)+'px';
 });
 document.getElementById('inp').addEventListener('keydown',function(e){
   if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}
 });
-
-// Save session when page closes
-window.addEventListener('beforeunload', saveSession);
+window.addEventListener('beforeunload',saveSession);
 
 recog=buildRecog(curLang);
 checkConn();
@@ -1153,3 +1083,4 @@ loadTherapyDataset();
 </script>
 </body>
 </html>
+
